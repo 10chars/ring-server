@@ -15,6 +15,11 @@ npm i
 RING_REFRESH_TOKEN=eyJhbGciOi...afa1
 ```
 
+## Add webhook to call on doorbell press event
+```
+WEBHOOK_URL=https://path.to.my.webhook.com/
+```
+
 ## Build
 
 ```sh

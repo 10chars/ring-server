@@ -4,9 +4,8 @@ import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
 
 async function frontdoorEventHandler() {
-  const { env } = process;
   const ringApi = new RingApi({
-      refreshToken: env.RING_REFRESH_TOKEN!,
+      refreshToken: process.env.RING_REFRESH_TOKEN!,
       debug: true,
     });
   
@@ -36,8 +35,16 @@ async function frontdoorEventHandler() {
   );
 
   if (frontdoor) {
-    frontdoor.onDoorbellPressed.subscribe(({ ding, subtype }) => {
+    frontdoor.onDoorbellPressed.subscribe(async ({ ding, subtype }) => {
       console.log(`Doorbell event triggered on frontdoor at ${new Date()}`);
+      try {
+        const response = await fetch(process.env.WEBHOOK_URL!);
+        if (!response.ok) {
+          throw new Error('Webhook failed')
+        }
+      } catch(error) {
+        console.error(error)
+      }
     });
     console.log('Listening for motion and doorbell presses on your cameras.');
   }
